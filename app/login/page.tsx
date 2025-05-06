@@ -333,48 +333,33 @@ function Login() {
     );
 
     const handleSendVerificationCode = async () => {
-        const phNum = `${countryCode}${formData.phoneNumber}`
-        console.log("GG:",phNum);
-
-        setPhoneNumber(phNum)
-    
+        const phNum = `${countryCode}${formData.phoneNumber}`;
+        setPhoneNumber(phNum); // this is optional now
         requestOtp(phNum);
-    };
+      };
+      
 
-    const requestOtp = async (e: string) => {
-        // e?.preventDefault();
-    
-        setResendCountdown(60)
-    
+    const requestOtp = async (phNum: string) => {
+        setResendCountdown(60);
+      
         startTrnasition(async () => {
-            setError("");
-            if (!recaptchaVerifier) {
-                console.log("captcha issue")
-                return setError("Captch not initialied")
-            }
-    
-            console.log('trying');
-            console.log(phoneNumber);
-            
-    
-            try {
-                const confirmResult = await signInWithPhoneNumber(
-                    auth,
-                    phoneNumber,
-                    recaptchaVerifier
-                )
-    
-                console.log(confirmResult)
-    
-                setConfrimationResult(confirmResult)
-                setSuccess("Sent")
-    
-            }catch (e) {
-                console.log(e)
-                setResendCountdown(0)
-            }
-        })
-    }
+          setError("");
+      
+          if (!recaptchaVerifier) {
+            console.log("captcha issue");
+            return setError("Captcha not initialized");
+          }
+      
+          try {
+            const confirmResult = await signInWithPhoneNumber(auth, phNum, recaptchaVerifier);
+            setConfrimationResult(confirmResult);
+            setSuccess("Sent");
+          } catch (e) {
+            console.log(e);
+            setResendCountdown(0);
+          }
+        });
+      };
 
     const verifyOTP = async () => {
         startTrnasition(async () => {
