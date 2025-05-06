@@ -297,12 +297,12 @@ function Login() {
 
     const navigateToSection = (section: string) => {
         setCurrentSection(section);
-        
         const sectionElement = document.getElementById(section);
-        const containerElement = containerRef.current as HTMLElement | null;
-        if (sectionElement && containerElement) {
+        if (sectionElement && containerRef.current) {
+          const containerElement = containerRef.current as HTMLElement;
           containerElement.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
         }
+    }
     
     const goBack = () => {
         const currentIndex = sectionOrder.indexOf(currentSection);
@@ -523,7 +523,7 @@ function Login() {
                         {[...Array(6)].map((_, index) => (
                         <input
                             key={index}
-                            type="tel"
+                            type="text"
                             maxLength={1}
                             inputMode="numeric"
                             pattern="\d*"
@@ -591,6 +591,6 @@ function Login() {
         </div>
     </div>
   )
-}}
+}
 
 export default Login
