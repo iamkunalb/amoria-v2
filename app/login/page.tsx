@@ -297,13 +297,12 @@ function Login() {
 
     const navigateToSection = (section: string) => {
         setCurrentSection(section);
+        
         const sectionElement = document.getElementById(section);
-        if (sectionElement && containerRef.current) {
-          containerRef?.current.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
+        const containerElement = containerRef.current as HTMLElement | null;
+        if (sectionElement && containerElement) {
+          containerElement.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
         }
-    };
-
-   
     
     const goBack = () => {
         const currentIndex = sectionOrder.indexOf(currentSection);
@@ -342,7 +341,7 @@ function Login() {
         requestOtp(phNum);
     };
 
-    const requestOtp = async (e) => {
+    const requestOtp = async (e: string) => {
         // e?.preventDefault();
     
         setResendCountdown(60)
@@ -524,20 +523,21 @@ function Login() {
                         {[...Array(6)].map((_, index) => (
                         <input
                             key={index}
-                            type="text"
-                            maxLength="1"
+                            type="tel"
+                            maxLength={1}
                             inputMode="numeric"
                             pattern="\d*"
                             value={verificationInputs[index]}
                             className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg sm:text-xl rounded-lg bg-white dark:bg-black border font-[family-name:var(--font-geist-mono)] focus:border-2 focus:border-black dark:focus:border-white outline-none"
                             onKeyUp={(e) => {
+                            const target = e.target as HTMLInputElement;
                             // Move to next input when digit is entered
-                            if (e.target.value && index < 5) {
-                                e.target.nextElementSibling?.focus();
+                            if (target.value && index < 5) {
+                                (target.nextElementSibling as HTMLInputElement)?.focus();
                             }
                             // Move to previous input on backspace if empty
-                            if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                                e.target.previousElementSibling?.focus();
+                            if (e.key === 'Backspace' && !target.value && index > 0) {
+                                (target.previousElementSibling as HTMLInputElement)?.focus();
                             }
                             }}
                             onChange={(e) => {
@@ -591,6 +591,6 @@ function Login() {
         </div>
     </div>
   )
-}
+}}
 
 export default Login
