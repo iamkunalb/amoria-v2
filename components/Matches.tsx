@@ -73,10 +73,10 @@ function Matches() {
 
 //   const fetchAllMatches = async () => {
 //     try {
-//     //   const res = await fetch("http://127.0.0.1:8000/match-all");
+//     //   const res = await fetch("https://amoria-api.onrender.com/match-all");
 //     //   const data = await res.json();
 
-//       const res = await fetch("http://127.0.0.1:8000/match-rounds");
+//       const res = await fetch("https://amoria-api.onrender.com/match-rounds");
 //         const data = await res.json();
 //         console.log(data);
         
@@ -125,7 +125,7 @@ function Matches() {
 //   };
 const fetchAllMatches = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/match-rounds");
+      const res = await fetch("https://amoria-api.onrender.com/match-rounds");
       const data = await res.json();
 
       console.log(data);
