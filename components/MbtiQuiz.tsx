@@ -104,9 +104,13 @@ function MbtiQuiz() {
         setCurrentSection(section);
         const sectionElement = document.getElementById(section);
         if (sectionElement && containerRef.current) {
-          containerRef.current.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
+          const container = containerRef.current as HTMLElement;
+          container.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
         }
-    };
+    }
+
+
+    
     
     const goBack = () => {
         const currentIndex = sectionOrder.indexOf(currentSection);
@@ -262,74 +266,74 @@ function MbtiQuiz() {
         // Add all men reference faces here
       ];
     
-      useEffect(() => {
-        if (showCamera && videoRef.current && !videoRef.current.srcObject) {
-          navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false
-          })
-          .then(stream => {
-            videoRef.current.srcObject = stream;
-            setStream(stream);
-          })
-          .catch(err => {
-            console.error('Camera error:', err);
-            alert('Unable to access camera. Please make sure you have granted camera permissions.');
-          });
-        }
-      }, [showCamera]);
+    //   useEffect(() => {
+    //     if (showCamera && videoRef.current && !(videoRef.current as HTMLVideoElement).srcObject) {
+    //       navigator.mediaDevices.getUserMedia({
+    //         video: true,
+    //         audio: false
+    //       })
+    //       .then(stream => {
+    //         videoRef.current.srcObject = stream;
+    //         setStream(stream);
+    //       })
+    //       .catch(err => {
+    //         console.error('Camera error:', err);
+    //         alert('Unable to access camera. Please make sure you have granted camera permissions.');
+    //       });
+    //     }
+    //   }, [showCamera]);
 
-      const takePhoto = async () => {
-        if (videoRef.current && stream) {
-          const canvas = document.createElement("canvas");
-          canvas.width = videoRef.current.videoWidth;
-          canvas.height = videoRef.current.videoHeight;
-          const ctx = canvas.getContext("2d");
+    //   const takePhoto = async () => {
+    //     if (videoRef.current && stream) {
+    //       const canvas = document.createElement("canvas");
+    //       canvas.width = videoRef.current.videoWidth;
+    //       canvas.height = videoRef.current.videoHeight;
+    //       const ctx = canvas.getContext("2d");
           
-          // Flip the image horizontally for selfie mirror effect
-          ctx.scale(-1, 1);
-          ctx.drawImage(videoRef.current, -canvas.width, 0, canvas.width, canvas.height);
+    //       // Flip the image horizontally for selfie mirror effect
+    //       ctx.scale(-1, 1);
+    //       ctx.drawImage(videoRef.current, -canvas.width, 0, canvas.width, canvas.height);
           
-          const photoUrl = canvas.toDataURL("image/jpeg");
-          setSelectedImage(photoUrl);
-          setFormData(prev => ({ ...prev, selfieImage: photoUrl }));
-          stopCamera();
+    //       const photoUrl = canvas.toDataURL("image/jpeg");
+    //       setSelectedImage(photoUrl);
+    //       setFormData(prev => ({ ...prev, selfieImage: photoUrl }));
+    //       stopCamera();
     
-          // Automatically get face type after taking photo
-          try {
-            // Convert base64 to blob
-            const response = await fetch(photoUrl);
-            const blob = await response.blob();
+    //       // Automatically get face type after taking photo
+    //       try {
+    //         // Convert base64 to blob
+    //         const response = await fetch(photoUrl);
+    //         const blob = await response.blob();
             
-            // Create file from blob
-            const file = new File([blob], "selfie.jpg", { type: "image/jpeg" });
+    //         // Create file from blob
+    //         const file = new File([blob], "selfie.jpg", { type: "image/jpeg" });
             
-            const formData = new FormData();
-            formData.append("file", file);
+    //         const formData = new FormData();
+    //         formData.append("file", file);
 
-            console.log(userId);
+    //         console.log(userId);
             
         
-            const res = await fetch(`http://127.0.0.1:8000/classify-selfie?user_id=${userId}`, {
-                method: "POST",
-                body: formData,
-              });
+    //         const res = await fetch(`http://127.0.0.1:8000/classify-selfie?user_id=${userId}`, {
+    //             method: "POST",
+    //             body: formData,
+    //           });
         
-            const data = await res.json();
-            console.log("Face Type:", data);
-            setFormData(prev => ({
-              ...prev,
-              userFaceType: data
-            }));
+    //         const data = await res.json();
+    //         console.log("Face Type:", data);
+    //         setFormData(prev => ({
+    //           ...prev,
+    //           userFaceType: data
+    //         }));
         
-          } catch (error) {
-            console.error("Error classifying face:", error);
-            alert("Failed to analyze face type. Please try again.");
-          }
-        }
-      };
+    //       } catch (error) {
+    //         console.error("Error classifying face:", error);
+    //         alert("Failed to analyze face type. Please try again.");
+    //       }
+    //     }
+    //   };
     
-      const getMBTI = (answers) => {
+      const getMBTI = (answers: any[]) => {
         const axisScores = {
           E: answers[0] + answers[1],
           I: 10 - answers[0] - answers[1],
@@ -425,8 +429,8 @@ function MbtiQuiz() {
           if (formData.selfieImage) {
             const blob = await (await fetch(formData.selfieImage)).blob();
             const downloadURL = await uploadUserPhoto(blob, newUserId);
-            formData.selfieImage = downloadURL;
-      
+            
+            setFormData(prev => ({ ...prev, selfieImage: downloadURL as any }));
             // 🔥 Save the download URL to Firestore later in setDoc
           }
       
@@ -480,78 +484,78 @@ function MbtiQuiz() {
       };
       
       
-      const handleMatch = async () => {
+    //   const handleMatch = async () => {
        
-        try {
-          // Get the current user's ID from localStorage
-          const storedData = localStorage.getItem('aiMatchmakerData');
-          // if (!storedData) {
-          //   alert('Please submit your profile first!');
-          //   return;
-          // }
+    //     try {
+    //       // Get the current user's ID from localStorage
+    //       const storedData = localStorage.getItem('aiMatchmakerData');
+    //       // if (!storedData) {
+    //       //   alert('Please submit your profile first!');
+    //       //   return;
+    //       // }
     
-          // Simplified location permission request
-          if ("geolocation" in navigator) {
-            setLocationStatus('waiting');
+    //       // Simplified location permission request
+    //       if ("geolocation" in navigator) {
+    //         setLocationStatus('waiting');
             
-            // Directly request location permission
-            navigator.geolocation.getCurrentPosition(
-              // Success callback
-              async (position) => {
-                setUserLocation({
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude
-                });
-                setLocationStatus('active');
+    //         // Directly request location permission
+    //         navigator.geolocation.getCurrentPosition(
+    //           // Success callback
+    //           async (position) => {
+    //             setUserLocation({
+    //               lat: position.coords.latitude,
+    //               lng: position.coords.longitude
+    //             });
+    //             setLocationStatus('active');
     
-                // Start watching location
-                const id = navigator.geolocation.watchPosition(
-                  (pos) => {
-                    setUserLocation({
-                      lat: pos.coords.latitude,
-                      lng: pos.coords.longitude
-                    });
-                  },
-                  (error) => {
-                    console.error("Error watching location:", error);
-                    setLocationStatus('error');
-                  },
-                  { enableHighAccuracy: true }
-                );
-                setWatchId(id);
+    //             // Start watching location
+    //             const id = navigator.geolocation.watchPosition(
+    //               (pos) => {
+    //                 setUserLocation({
+    //                   lat: pos.coords.latitude,
+    //                   lng: pos.coords.longitude
+    //                 });
+    //               },
+    //               (error) => {
+    //                 console.error("Error watching location:", error);
+    //                 setLocationStatus('error');
+    //               },
+    //               { enableHighAccuracy: true }
+    //             );
+    //             setWatchId(id);
     
-                // After location is obtained, fetch matches
-                const response = await fetch(`http://127.0.0.1:8000/match/user_1745062738828`);
-                if (!response.ok) {
-                  throw new Error('Failed to fetch matches');
-                }
-                const matchData = await response.json();
-                setMatchResults(matchData.matches);
-                navigateToSection('location-direction');
-              },
-              // Error callback
-              (error) => {
-                console.error("Error getting location:", error);
-                setLocationStatus('error');
-                alert('Please enable location access to find matches near you.');
-              },
-              // Options
-              {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-              }
-            );
-          } else {
-            setLocationStatus('error');
-            alert('Location services are not available on your device.');
-          }
+    //             // After location is obtained, fetch matches
+    //             const response = await fetch(`http://127.0.0.1:8000/match/user_1745062738828`);
+    //             if (!response.ok) {
+    //               throw new Error('Failed to fetch matches');
+    //             }
+    //             const matchData = await response.json();
+    //             setMatchResults(matchData.matches);
+    //             navigateToSection('location-direction');
+    //           },
+    //           // Error callback
+    //           (error) => {
+    //             console.error("Error getting location:", error);
+    //             setLocationStatus('error');
+    //             alert('Please enable location access to find matches near you.');
+    //           },
+    //           // Options
+    //           {
+    //             enableHighAccuracy: true,
+    //             timeout: 5000,
+    //             maximumAge: 0
+    //           }
+    //         );
+    //       } else {
+    //         setLocationStatus('error');
+    //         alert('Location services are not available on your device.');
+    //       }
     
-        } catch (error) {
-          console.error('Error getting matches:', error);
-          alert('Failed to find matches. Please try again.');
-        }
-      };
+    //     } catch (error) {
+    //       console.error('Error getting matches:', error);
+    //       alert('Failed to find matches. Please try again.');
+    //     }
+    //   };
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} h-screen overflow-hidden`}>
@@ -789,8 +793,15 @@ function MbtiQuiz() {
                                     </div>
                                     </div>
                                     <Image
-                                        src={`/reference_faces/${imageName}`}
-                                        alt={imageName.split('/').pop().replace('.jpg', '').replace('.png', '').replace(/_/g, ' ')}
+                                        src={`/reference_faces/${imageName ?? ''}`}
+                                        alt={
+                                            imageName
+                                                ? ((imageName.split('/').pop() || 'Image')
+                                                    .replace('.jpg', '')
+                                                    .replace('.png', '')
+                                                    .replace(/_/g, ' '))
+                                                : 'Image'
+                                        }
                                         fill
                                         className="object-cover"
                                         sizes="(max-width: 768px) 33vw, 150px"
@@ -853,8 +864,8 @@ function MbtiQuiz() {
                                     const file = e.target.files?.[0];
                                     if (file) {
                                         const url = URL.createObjectURL(file);
-                                        setSelectedImage(url);
-                                        setFormData(prev => ({ ...prev, selfieImage: url }));
+                                        setSelectedImage(url as unknown as null);
+                                        setFormData(prev => ({ ...prev, selfieImage: url as unknown as null }));
                                         
                                         // Automatically get face type after photo upload
                                         try {
@@ -937,104 +948,8 @@ function MbtiQuiz() {
                             >
                             Match
                             </button>
-
-                            {/* Modal */}
-                            {showModal && (
-                            <div 
-                                className="absolute inset-0 bg-black/[.05] dark:bg-white/[.06] backdrop-blur-sm flex items-center justify-center"
-                                onClick={() => !isLoading && setShowModal(false)}
-                            >
-                                <div 
-                                className="bg-white dark:bg-black rounded-2xl p-8 max-w-lg w-full mx-4"
-                                onClick={(e) => e.stopPropagation()}
-                                >
-                                {isLoading ? (
-                                    <>
-                                    <div className="w-8 h-8 border-2 border-black/20 dark:border-white/20 border-t-black dark:border-t-white rounded-full animate-spin" />
-                                    <p className="text-sm font-[family-name:var(--font-geist-mono)]">Processing...</p>
-                                    </>
-                                ) : (
-                                    <div className="space-y-6">
-                                    <h3 className="text-xl font-bold text-center mb-4">Your Matches</h3>
-                                    {matchResults.map((match, index) => {
-                                        // const distance = userLocation && match.location ? 
-                                        // calculateDistance(
-                                        //     userLocation.lat, 
-                                        //     userLocation.lng, 
-                                        //     match.location.lat, 
-                                        //     match.location.lng
-                                        // ) : null;
-
-                                        // const bearing = userLocation && match.location ? 
-                                        // calculateBearing(
-                                        //     userLocation.lat, 
-                                        //     userLocation.lng, 
-                                        //     match.location.lat, 
-                                        //     match.location.lng
-                                        // ) : null;
-
-                                        return (
-                                        <div key={index} className="border-b pb-4 last:border-b-0">
-                                            <div className="flex justify-between items-start mb-2">
-                                            <h4 className="font-bold">{match?.name}</h4>
-                                            <span className="text-sm bg-black/[.05] dark:bg-white/[.06] px-2 py-1 rounded-full">
-                                                {match.matchScore}% Match
-                                            </span>
-                                            </div>
-                                            <div className="text-sm space-y-1">
-                                            <p>MBTI: {match.mbti}</p>
-                                            <p>Age: {match.age}</p>
-                                            {/* {distance && (
-                                                <div className="flex items-center justify-between mt-2">
-                                                <div className="flex items-center gap-2">
-                                                    <svg 
-                                                    className="w-4 h-4" 
-                                                    fill="none" 
-                                                    stroke="currentColor" 
-                                                    viewBox="0 0 24 24"
-                                                    >
-                                                    <path 
-                                                        strokeLinecap="round" 
-                                                        strokeLinejoin="round" 
-                                                        strokeWidth={2} 
-                                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                                    />
-                                                    <path 
-                                                        strokeLinecap="round" 
-                                                        strokeLinejoin="round" 
-                                                        strokeWidth={2} 
-                                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                                    />
-                                                    </svg>
-                                                    <span>{distance} km away</span>
-                                                </div>
-                                                {bearing !== null && (
-                                                    <div className="flex items-center gap-2">
-                                                    <DirectionArrow bearing={bearing} compass={compass} />
-                                                    <div className="text-xs text-gray-500">
-                                                        {compass ? 'Live direction' : 'No compass data'}
-                                                    </div>
-                                                    </div>
-                                                )}
-                                                </div>
-                                            )} */}
-                                            </div>
-                                        </div>
-                                        );
-                                    })}
-                                    
-                                    {/* {!userLocation && (
-                                        <div className="text-center text-sm text-gray-500 mt-4">
-                                        Enable location services to see distance and directions
-                                        </div>
-                                    )} */}
-                                    </div>
-                                )}
-                                </div>
-                            </div>
-                            )}
                         </div>
-                        </section>
+                    </section>
                 </>
             )}
         </div>
