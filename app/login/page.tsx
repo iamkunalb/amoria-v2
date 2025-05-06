@@ -299,7 +299,7 @@ function Login() {
         setCurrentSection(section);
         const sectionElement = document.getElementById(section);
         if (sectionElement && containerRef.current) {
-          containerRef.current.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
+          containerRef?.current.style.transform = `translateY(-${sectionElement.offsetTop}px)`;
         }
     };
 
