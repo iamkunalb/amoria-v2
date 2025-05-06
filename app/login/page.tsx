@@ -432,7 +432,7 @@ function Login() {
             {/* Hero Section */}
             <section id="hero" className="h-screen flex items-center justify-center p-4">
                 <div className="max-w-4xl mx-auto px-4 text-center">
-                    <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">AI Matchmaker</h1>
+                    <h1 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6">Amoria.</h1>
                     <p className="text-lg sm:text-xl mb-6 sm:mb-8 font-[family-name:var(--font-geist-mono)]">
                     Intelligent matching for meaningful connections
                     </p>
