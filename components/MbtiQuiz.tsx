@@ -314,7 +314,7 @@ function MbtiQuiz() {
     //         console.log(userId);
             
         
-    //         const res = await fetch(`https://amoria-api.onrender.com/classify-selfie?user_id=${userId}`, {
+    //         const res = await fetch(`https://amoria-api-production.up.railway.app/classify-selfie?user_id=${userId}`, {
     //             method: "POST",
     //             body: formData,
     //           });
@@ -392,7 +392,7 @@ function MbtiQuiz() {
 
       const fetchAllMatches = async () => {
         try {
-          const res = await fetch("https://amoria-api.onrender.com/match-all");
+          const res = await fetch("https://amoria-api-production.up.railway.app/match-all");
           const data = await res.json();
       
           console.log("All Matches:", data);
@@ -454,7 +454,7 @@ function MbtiQuiz() {
       
           await setDoc(doc(db, "users", simpleData.id), simpleData.data);
       
-          const response = await fetch('https://amoria-api.onrender.com/save-user-data', {
+          const response = await fetch('https://amoria-api-production.up.railway.app/save-user-data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(simpleData)
@@ -525,7 +525,7 @@ function MbtiQuiz() {
     //             setWatchId(id);
     
     //             // After location is obtained, fetch matches
-    //             const response = await fetch(`https://amoria-api.onrender.com/match/user_1745062738828`);
+    //             const response = await fetch(`https://amoria-api-production.up.railway.app/match/user_1745062738828`);
     //             if (!response.ok) {
     //               throw new Error('Failed to fetch matches');
     //             }
@@ -881,7 +881,7 @@ function MbtiQuiz() {
 
                                             console.log(gender);
                                             
-                                        const res = await fetch(`https://amoria-api.onrender.com/classify-selfie?gender=${gender}`, {
+                                        const res = await fetch(`https://amoria-api-production.up.railway.app/classify-selfie?gender=${gender}`, {
                                             method: "POST",
                                             body: formData,
                                           });
