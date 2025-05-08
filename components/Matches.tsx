@@ -73,10 +73,10 @@ function Matches() {
 
 //   const fetchAllMatches = async () => {
 //     try {
-//     //   const res = await fetch("https://amoria-api-production.up.railway.app/match-all");
+//     //   const res = await fetch("https://amoria-api-1087547623917.us-central1.run.app/match-all");
 //     //   const data = await res.json();
 
-//       const res = await fetch("https://amoria-api-production.up.railway.app/match-rounds");
+//       const res = await fetch("https://amoria-api-1087547623917.us-central1.run.app/match-rounds");
 //         const data = await res.json();
 //         console.log(data);
         
@@ -125,7 +125,7 @@ function Matches() {
 //   };
 const fetchAllMatches = async () => {
     try {
-      const res = await fetch("https://amoria-api-production.up.railway.app/match-rounds");
+      const res = await fetch("https://amoria-api-1087547623917.us-central1.run.app/match-rounds");
       const data = await res.json();
 
       console.log(data);
