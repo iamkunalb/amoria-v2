@@ -45,7 +45,7 @@ function MbtiQuiz() {
     const [showCamera, setShowCamera] = useState(false);
     const [stream, setStream] = useState(null);
     const videoRef = useRef(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
       phoneNumber: '',
       firstName: '',
