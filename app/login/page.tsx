@@ -570,7 +570,6 @@ function Login() {
                         Resend
                         </button>
                     </p>
-                    <NavigationButtons />
                     </div>
                 </div>
             </section>
