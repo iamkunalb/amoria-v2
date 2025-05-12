@@ -84,17 +84,17 @@ function MbtiQuiz() {
 
     const sectionOrder = [
         'user-info', 
-        'mbti1', 
-        'mbti2', 
-        'mbti3', 
-        'mbti4', 
-        'mbti5', 
-        'mbti6', 
-        'mbti7', 
-        'mbti8', 
-        'mbti9', 
-        'mbti10',
-        'face-preferences',
+        // 'mbti1', 
+        // 'mbti2', 
+        // 'mbti3', 
+        // 'mbti4', 
+        // 'mbti5', 
+        // 'mbti6', 
+        // 'mbti7', 
+        // 'mbti8', 
+        // 'mbti9', 
+        // 'mbti10',
+        // 'face-preferences',
         'selfie-upload',
         'submit',
         // 'location-direction'
@@ -357,39 +357,7 @@ function MbtiQuiz() {
         return mbti;
       };
 
-      const addUserToFirestore = async () => {
-        const userObject = {
-          id: "user_1746327211880",
-          data: {
-            phoneNumber: "",
-            firstName: "Kunal",
-            lastName: "Bhatia",
-            age: "27",
-            gender: "male",
-            sexualOrientation: "straight",
-            personalityAnswers: [5, 4, 4, 5, 4, 4, 5, 4, 5, 3],
-            selectedFaces: [
-              "women/exotic_chiseled.jpg",
-              "women/swedish.png",
-              "women/latina.png"
-            ],
-            selfieImage: "blob:http://localhost:3000/a53376eb-8631-4657-9e67-387942b63089",
-            userFaceType: null,
-            mbti: "ESTJ",
-            submittedAt: new Date().toISOString()
-          }
-        };
-      
-        try {
-          await setDoc(doc(db, "users", userObject.id), userObject.data);
-          console.log("User added!");
-        } catch (e) {
-          console.error("Error adding user: ", e);
-        }
-      };
-    
-      
-
+           
       const fetchAllMatches = async () => {
         try {
           const res = await fetch("https://amoria-api-1087547623917.us-central1.run.app/match-all");
@@ -471,15 +439,18 @@ function MbtiQuiz() {
           setTimeout(() => {
             setIsLoading(false);
             setSubmitted(true);
+            setUserDataExists(true)
             localStorage.setItem('aiMatchmakerSubmitted', 'true');
+            window.location.reload();
           }, 3000);
 
-          setUserDataExists(true)
+
+
       
         } catch (error) {
           console.error('Error:', error);
           setIsLoading(false);
-          alert('Failed to save data. Please try again.');
+          // alert('Failed to save data. Please try again.');
         }
       };
       
@@ -754,6 +725,15 @@ function MbtiQuiz() {
                         </section>
                     ))}
 
+                      {isLoading && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                          <div className="bg-white dark:bg-black p-6 rounded-xl shadow-lg flex flex-col items-center gap-4">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-gray-800 dark:border-white"></div>
+                            <p className="text-black dark:text-white">Submitting...</p>
+                          </div>
+                        </div>
+                      )}
+
                         {/* Face Preferences Section */}
                         <section id="face-preferences" className="h-screen flex items-center bg-black/[.05] dark:bg-white/[.06] p-4">
                         <div className="w-full max-w-4xl mx-auto px-4">
@@ -895,7 +875,7 @@ function MbtiQuiz() {
                                     
                                         } catch (error) {
                                         console.error("Error classifying face:", error);
-                                        alert("Failed to analyze face type. Please try again.");
+                                        // alert("Failed to analyze face type. Please try again.");
                                         }
                                     }
                                     }}
@@ -942,12 +922,12 @@ function MbtiQuiz() {
                                 >
                                 Submit
                             </button>
-                            <button 
+                            {/* <button 
                             onClick={fetchAllMatches}
                             className="w-full rounded-full mt-3 border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium px-8 py-3 text-sm sm:text-base"
                             >
                             Match
-                            </button>
+                            </button> */}
                         </div>
                     </section>
                 </>
