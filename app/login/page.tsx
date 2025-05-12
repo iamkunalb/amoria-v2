@@ -354,6 +354,7 @@ function Login() {
             const confirmResult = await signInWithPhoneNumber(auth, phNum, recaptchaVerifier);
             setConfrimationResult(confirmResult);
             setSuccess("Sent");
+              navigateToSection('otp'); 
           } catch (e) {
             console.log(e);
             setResendCountdown(0);
@@ -494,7 +495,7 @@ function Login() {
                     <p className="text-sm text-center font-[family-name:var(--font-geist-mono)] text-gray-600 dark:text-gray-400">
                         We'll send you a verification code to get started
                     </p>
-                    <NavigationButtons />
+                        {/*<NavigationButtons />*/}
                     </div>
                 </div>
             </section>
