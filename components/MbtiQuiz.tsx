@@ -422,18 +422,7 @@ function MbtiQuiz() {
       
           await setDoc(doc(db, "users", simpleData.id), simpleData.data);
       
-          const response = await fetch('https://amoria-api-1087547623917.us-central1.run.app/save-user-data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(simpleData)
-          });
-      
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Failed to save data');
-          }
-      
-          const result = await response.json();
+          
           localStorage.setItem('aiMatchmakerData', JSON.stringify(simpleData));
       
           setTimeout(() => {
