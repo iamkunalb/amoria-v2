@@ -333,6 +333,27 @@ function Login() {
         </div>
     );
 
+    const requestOtp = async (phNum: string) => {
+        setResendCountdown(60);
+        setError("");
+      
+        if (!recaptchaVerifier) {
+            console.log("captcha issue");
+            setError("Captcha not initialized");
+            return;
+        }
+      
+        try {
+            const confirmResult = await signInWithPhoneNumber(auth, phNum, recaptchaVerifier);
+            setConfrimationResult(confirmResult);
+            setSuccess("Sent");
+            navigateToSection('otp'); 
+        } catch (e) {
+            console.log(e);
+            setResendCountdown(0);
+        }
+    };
+
     const handleSendVerificationCode = async () => {
         setIsLoading(true);
         const phNum = `${countryCode}${formData.phoneNumber}`;
@@ -343,30 +364,6 @@ function Login() {
             setIsLoading(false);
         }
     };
-      
-
-    const requestOtp = async (phNum: string) => {
-        setResendCountdown(60);
-      
-        startTrnasition(async () => {
-          setError("");
-      
-          if (!recaptchaVerifier) {
-            console.log("captcha issue");
-            return setError("Captcha not initialized");
-          }
-      
-          try {
-            const confirmResult = await signInWithPhoneNumber(auth, phNum, recaptchaVerifier);
-            setConfrimationResult(confirmResult);
-            setSuccess("Sent");
-              navigateToSection('otp'); 
-          } catch (e) {
-            console.log(e);
-            setResendCountdown(0);
-          }
-        });
-      };
 
     const verifyOTP = async () => {
         setIsVerifying(true);
