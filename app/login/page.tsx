@@ -255,7 +255,7 @@ function Login() {
     const [showCamera, setShowCamera] = useState(false);
     const [stream, setStream] = useState(null);
     const videoRef = useRef(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
       phoneNumber: '',
       firstName: '',
@@ -294,6 +294,7 @@ function Login() {
     const [confrimationResult, setConfrimationResult] = useState<ConfirmationResult | null>(null);
 
     const [isPending, startTrnasition] = useTransition()
+    const [isVerifying, setIsVerifying] = useState(false);
 
     const navigateToSection = (section: string) => {
         setCurrentSection(section);
@@ -333,10 +334,15 @@ function Login() {
     );
 
     const handleSendVerificationCode = async () => {
+        setIsLoading(true);
         const phNum = `${countryCode}${formData.phoneNumber}`;
-        setPhoneNumber(phNum); // this is optional now
-        requestOtp(phNum);
-      };
+        setPhoneNumber(phNum);
+        try {
+            await requestOtp(phNum);
+        } finally {
+            setIsLoading(false);
+        }
+    };
       
 
     const requestOtp = async (phNum: string) => {
@@ -363,25 +369,25 @@ function Login() {
       };
 
     const verifyOTP = async () => {
+        setIsVerifying(true);
         startTrnasition(async () => {
             setError("")
 
             if(!confrimationResult){
                 setError("Enter OTP")
+                setIsVerifying(false);
                 return
             }
 
             console.log("otp", verificationInputs.join(''));
             
-
             try {
                 await confrimationResult?.confirm(verificationInputs.join(''))
                 console.log("DONE BRO");
-                
                 router.replace("/")
-            }catch (e) {
-                console.log(e)  
-
+            } catch (e) {
+                console.log(e)
+                setIsVerifying(false);
             }
         })
     }
@@ -428,6 +434,18 @@ function Login() {
     // </div>
     <div className={`${geistSans.className} ${geistMono.className} h-screen overflow-hidden`}>
         <div id="recaptcha-container"></div>
+
+        {/* Loading Modal */}
+        {(isLoading || isVerifying) && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-black p-6 rounded-lg shadow-lg flex flex-col items-center gap-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+                    <p className="text-sm font-[family-name:var(--font-geist-mono)]">
+                        {isLoading ? "Sending verification code..." : "Verifying code..."}
+                    </p>
+                </div>
+            </div>
+        )}
 
         <div ref={containerRef} className="transition-transform duration-1000 ease-in-out">
             {/* Hero Section */}
