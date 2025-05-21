@@ -399,7 +399,6 @@ function MbtiQuiz() {
             const downloadURL = await uploadUserPhoto(blob, newUserId);
             
             setFormData(prev => ({ ...prev, selfieImage: downloadURL as any }));
-            // 🔥 Save the download URL to Firestore later in setDoc
           }
       
           const simpleData = {
@@ -425,21 +424,19 @@ function MbtiQuiz() {
           
           localStorage.setItem('aiMatchmakerData', JSON.stringify(simpleData));
       
+          // Keep loading state active until page refresh
+          setSubmitted(true);
+          setUserDataExists(true);
+          localStorage.setItem('aiMatchmakerSubmitted', 'true');
+          
+          // Add a small delay before refresh to ensure loading state is visible
           setTimeout(() => {
-            setIsLoading(false);
-            setSubmitted(true);
-            setUserDataExists(true)
-            localStorage.setItem('aiMatchmakerSubmitted', 'true');
             window.location.reload();
-          }, 3000);
-
-
-
+          }, 1000);
       
         } catch (error) {
           console.error('Error:', error);
           setIsLoading(false);
-          // alert('Failed to save data. Please try again.');
         }
       };
       
@@ -519,6 +516,16 @@ function MbtiQuiz() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} h-screen overflow-hidden`}>
+        {/* Loading Modal */}
+        {isLoading && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                <div className="bg-white dark:bg-black p-6 rounded-xl shadow-lg flex flex-col items-center gap-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-gray-800 dark:border-white"></div>
+                    <p className="text-black dark:text-white font-[family-name:var(--font-geist-mono)]">Submitting your profile...</p>
+                </div>
+            </div>
+        )}
+
         <div ref={containerRef} className="transition-transform duration-1000 ease-in-out">
             {showInitialLoading ? (
                 <div className="flex flex-col items-center justify-center h-screen w-full">
@@ -713,15 +720,6 @@ function MbtiQuiz() {
                         </div>
                         </section>
                     ))}
-
-                      {isLoading && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                          <div className="bg-white dark:bg-black p-6 rounded-xl shadow-lg flex flex-col items-center gap-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-gray-800 dark:border-white"></div>
-                            <p className="text-black dark:text-white">Submitting...</p>
-                          </div>
-                        </div>
-                      )}
 
                         {/* Face Preferences Section */}
                         <section id="face-preferences" className="h-screen flex items-center bg-black/[.05] dark:bg-white/[.06] p-4">
