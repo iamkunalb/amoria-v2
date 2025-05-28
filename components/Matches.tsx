@@ -157,14 +157,14 @@ const fetchAllMatches = async () => {
   }, []); // Empty dependency array means this runs once on mount
 
   return (
-    <div className="h-screen flex flex-col items-center p-5 bg-white dark:bg-black">
+    <div className="h-screen flex overflow-hidden flex-col items-center p-5 bg-white dark:bg-black">
       {/* <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-6">
         Based on your profile and preferences
         </p> */}
       {loading ? (
         <div className="text-gray-500 dark:text-gray-400">Loading...</div>
       ) : (
-          <div className="overflow-hidden">
+          <div>
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">
               Showing match for <span className="font-medium">Round {roundIndex + 1}</span>
             </p>
