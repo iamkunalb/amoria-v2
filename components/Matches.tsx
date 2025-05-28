@@ -164,7 +164,7 @@ const fetchAllMatches = async () => {
       {loading ? (
         <div className="text-gray-500 dark:text-gray-400">Loading...</div>
       ) : (
-          <div>
+          <>
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">
               Showing match for <span className="font-medium">Round {roundIndex + 1}</span>
             </p>
@@ -257,7 +257,7 @@ const fetchAllMatches = async () => {
                 ))}
               </div>
             </div>
-          </div>
+          </>
         )}
 
       {/* Modal */}
