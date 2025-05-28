@@ -46,6 +46,7 @@ function MbtiQuiz() {
     const [stream, setStream] = useState(null);
     const videoRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isImageProcessing, setIsImageProcessing] = useState(false);
     const [formData, setFormData] = useState({
       phoneNumber: '',
       firstName: '',
@@ -223,26 +224,69 @@ function MbtiQuiz() {
         checkUser();
     }, []);
     
-    const NavigationButtons = ({ showBack = true }) => (
-        <div className="flex gap-4 w-full mt-8">
-            {showBack && currentSection !== 'hero' && (
-            <button 
-                onClick={goBack}
-                className="flex-1 rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] font-medium px-8 py-3"
-            >
-                Back
-            </button>
-            )}
-            {currentSection !== 'contact' && (
+    const NavigationButtons = ({ showBack = true }) => {
+        const isFormValid = () => {
+            switch (currentSection) {
+                case 'user-info':
+                    return formData.firstName && formData.lastName && formData.age && formData.gender && formData.sexualOrientation;
+                case 'mbti1':
+                case 'mbti2':
+                case 'mbti3':
+                case 'mbti4':
+                case 'mbti5':
+                case 'mbti6':
+                case 'mbti7':
+                case 'mbti8':
+                case 'mbti9':
+                case 'mbti10':
+                    // Always return true for MBTI sections to show back button
+                    return true;
+                case 'face-preferences':
+                    return selectedFaces.size > 0;
+                case 'selfie-upload':
+                    return formData.selfieImage !== null;
+                default:
+                    return true;
+            }
+        };
+
+        if (!isFormValid()) {
+            return null;
+        }
+
+        return (
+            <div className="flex gap-4 w-full mt-8">
+                {showBack && currentSection !== 'hero' && (
                 <button 
-                    onClick={() => navigateToSection(sectionOrder[sectionOrder.indexOf(currentSection) + 1])}
+                    onClick={goBack}
+                    className="flex-1 rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] font-medium px-8 py-3"
+                >
+                    Back
+                </button>
+                )}
+                {(currentSection === 'user-info' || currentSection === 'face-preferences' || currentSection === 'selfie-upload') && (
+                <button 
+                    onClick={() => {
+                        switch(currentSection) {
+                            case 'user-info':
+                                navigateToSection('mbti1');
+                                break;
+                            case 'face-preferences':
+                                navigateToSection('selfie-upload');
+                                break;
+                            case 'selfie-upload':
+                                navigateToSection('submit');
+                                break;
+                        }
+                    }}
                     className="flex-1 rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium px-8 py-3"
                 >
                     Next
                 </button>
-            )}
-        </div>
-    );
+                )}
+            </div>
+        );
+    };
 
     const womenFaces = [
         'women/asian_cute.jpg',
@@ -526,6 +570,16 @@ function MbtiQuiz() {
             </div>
         )}
 
+        {/* Image Processing Modal */}
+        {isImageProcessing && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                <div className="bg-white dark:bg-black p-6 rounded-xl shadow-lg flex flex-col items-center gap-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-gray-800 dark:border-white"></div>
+                    <p className="text-black dark:text-white font-[family-name:var(--font-geist-mono)]">Processing your photo...</p>
+                </div>
+            </div>
+        )}
+
         <div ref={containerRef} className="transition-transform duration-1000 ease-in-out">
             {showInitialLoading ? (
                 <div className="flex flex-col items-center justify-center h-screen w-full">
@@ -673,6 +727,13 @@ function MbtiQuiz() {
                                             idx === index ? number : ans
                                             )
                                         }));
+                                        // Automatically navigate to next section after selecting a rating
+                                        const nextIndex = index + 1;
+                                        if (nextIndex < 10) {
+                                            navigateToSection(`mbti${nextIndex + 1}`);
+                                        } else {
+                                            navigateToSection('face-preferences');
+                                        }
                                         }}
                                         className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border border-solid 
                                         transition-all duration-200 flex items-center justify-center 
@@ -829,40 +890,46 @@ function MbtiQuiz() {
                                     className="hidden"
                                     onChange={async (e) => {
                                     const file = e.target.files?.[0];
-                                    if (file) {
+                                    if (file) { 
                                         const url = URL.createObjectURL(file);
                                         setSelectedImage(url as unknown as null);
                                         setFormData(prev => ({ ...prev, selfieImage: url as unknown as null }));
                                         
+                                        // Show loading modal
+                                        setIsImageProcessing(true);
+                                        
                                         // Automatically get face type after photo upload
                                         try {
-                                        // Convert file to blob
-                                        const response = await fetch(url);
-                                        const blob = await response.blob();
-                                        
-                                        // Create file from blob
-                                        const imageFile = new File([blob], "selfie.jpg", { type: "image/jpeg" });
-                                        
-                                        const formData = new FormData();
-                                        formData.append("file", imageFile);
+                                            // Convert file to blob
+                                            const response = await fetch(url);
+                                            const blob = await response.blob();
+                                            
+                                            // Create file from blob
+                                            const imageFile = new File([blob], "selfie.jpg", { type: "image/jpeg" });
+                                            
+                                            const formData = new FormData();
+                                            formData.append("file", imageFile);
 
                                             console.log(gender);
                                             
-                                        const res = await fetch(`https://amoria-api-1087547623917.us-central1.run.app/classify-selfie?gender=${gender}`, {
-                                            method: "POST",
-                                            body: formData,
-                                          });
+                                            const res = await fetch(`https://amoria-api-1087547623917.us-central1.run.app/classify-selfie?gender=${gender}`, {
+                                                method: "POST",
+                                                body: formData,
+                                            });
                                     
-                                        const data = await res.json();
-                                        console.log("Face Type:", data);
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            userFaceType: data
-                                        }));
+                                            const data = await res.json();
+                                            console.log("Face Type:", data);
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                userFaceType: data
+                                            }));
                                     
                                         } catch (error) {
-                                        console.error("Error classifying face:", error);
-                                        // alert("Failed to analyze face type. Please try again.");
+                                            console.error("Error classifying face:", error);
+                                            // alert("Failed to analyze face type. Please try again.");
+                                        } finally {
+                                            // Hide loading modal
+                                            setIsImageProcessing(false);
                                         }
                                     }
                                     }}
