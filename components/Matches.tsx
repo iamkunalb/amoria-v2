@@ -157,7 +157,7 @@ const fetchAllMatches = async () => {
   }, []); // Empty dependency array means this runs once on mount
 
   return (
-    <div className="h-screen flex overflow-hidden flex-col items-center p-5 bg-white dark:bg-black">
+    <div className="h-screen flex flex-col items-center p-5 bg-white dark:bg-black">
       {/* <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-6">
         Based on your profile and preferences
         </p> */}
@@ -171,6 +171,7 @@ const fetchAllMatches = async () => {
             <h2 className="text-2xl font-bold mb-5 text-center text-black dark:text-white">
               {firstName} x {matches[0]?.name}
             </h2>
+
             <div className="flex-1 w-full overflow-y-auto">
               <div className="flex justify-center">
                 {matches.map((match, idx) => (
@@ -203,10 +204,10 @@ const fetchAllMatches = async () => {
                     </div>
 
                     <div className="flex-1 overflow-y-auto">
-                      <div className="p-6">
-                        <p className="text-base text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">{match.bio}</p>
+                      <div className="p-5">
+                        <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed">{match.bio}</p>
 
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6 space-y-4">
+                        <div className="space-y-2">
                           <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             <span className="text-pink-500">💘</span> Why You Match
                           </h4>
